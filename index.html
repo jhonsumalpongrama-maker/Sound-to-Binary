@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sound → Binary Converter</title>
+<link rel="stylesheet" href="style.css">
+<style>
+</style>
+<base target="_blank">
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Sound → Binary Converter</h1>
+    <p class="byline">Your Name: Sherwin Jhon Rama <br>Section: 32</p>
+  </header>
+
+  <!-- Stage 1: inputs + convert -->
+  <section class="card">
+    <h2>Inputs</h2>
+    <div class="controls">
+      <div><label for="freq">Frequency (Hz)</label><input id="freq" type="number" value="1000"></div>
+      <div><label for="amp">Amplitude (0 to 1)</label><input id="amp" type="number" step="0.01" value="1"></div>
+      <div><label for="samples">Number of samples</label><input id="samples" type="number" value="4"></div>
+      <div><label for="bits">Bits per sample</label><input id="bits" type="number" value="2"></div>
+    </div>
+    <div class="buttons">
+      <button class="convert" id="convertBtn">Convert</button>
+      <button class="play" id="playBtn">▶ Play Tone</button>
+    </div>
+    <div id="warnings"><ul id="warningList"></ul></div>
+  </section>
+
+  <!-- Stage 2: wave facts -->
+  <section class="card" id="factsCard" hidden>
+    <h2>Wave facts</h2>
+    <div class="facts">
+      <div class="fact"><div class="k">Amplitude</div><div class="v" id="fAmp"></div></div>
+      <div class="fact"><div class="k">Frequency</div><div class="v" id="fFreq"></div></div>
+      <div class="fact"><div class="k">Period</div><div class="v" id="fPeriod"></div></div>
+      <div class="fact"><div class="k">Wavelength</div><div class="v" id="fWave"></div></div>
+    </div>
+  </section>
+
+  <section class="card" id="vizCard" hidden>
+    <h2>Sampled wave</h2>
+    <canvas id="wave" width="800" height="220"></canvas>
+  </section>
+
+  <!-- Stages 3–4: table + binary -->
+  <section class="card" id="tableCard" hidden>
+    <h2>Sample table</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Sample</th><th>Time (ms)</th><th>Amplitude</th><th>Level</th><th>Binary</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <h2 style="margin-top:20px">Binary result</h2>
+    <div id="binaryOut"></div>
+    <p id="totalBits"></p>
+  </section>
+
+  <!-- Stage 6: test results (values below match what this app outputs) -->
+  <section class="card">
+    <h2>Test results</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Test</th><th>Frequency</th><th>Amplitude</th><th>Samples</th><th>Bits</th>
+                   <th>Period</th><th>Wavelength</th><th>Total bits</th><th>Binary result</th></tr></thead>
+        <tbody>
+          <tr><td>A</td><td>440</td><td>0.8</td><td>8</td><td>3</td>
+              <td>2.27 ms</td><td>77.95 cm</td><td>24</td>
+              <td class="bin">100 101 110 101 011 010 001 010</td></tr>
+          <tr><td>B</td><td>200</td><td>0.5</td><td>6</td><td>4</td>
+              <td>5.00 ms</td><td>171.50 cm</td><td>24</td>
+              <td class="bin">1000 1011 1011 1000 0100 0100</td></tr>
+          <tr><td>C</td><td>500</td><td>0.9</td><td>5</td><td>3</td>
+              <td>2.00 ms</td><td>68.60 cm</td><td>15</td>
+              <td class="bin">100 110 101 010 001</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Stage 6: explain it -->
+  <section class="card">
+    <h2>Explain it</h2>
+    <ol class="explain">
+      <li>My app turns a sound wave into binary in three steps: <strong>sampling</strong> — it measures the
+          wave's height at evenly spaced times; <strong>quantization</strong> — each height is rounded to the
+          nearest whole level (0 to 2^bits − 1); <strong>encoding</strong> — each level is written as binary
+          with leading zeros so every sample has the same number of bits, and all the samples are joined
+          into one long binary string.</li>
+      <li><strong>6 bits</strong> gives more detail. With 2 bits there are only 4 levels (0–3), so heights get
+          rounded far from their true value; with 6 bits there are 64 levels (0–63), so each rounded level
+          is much closer to the real wave height. More bits = smaller rounding error.</li>
+      <li><strong>Test B</strong> has the longest wavelength (171.50 cm) because it has the lowest frequency
+          (200 Hz). Wavelength = 343 ÷ frequency, so wavelength and frequency are inversely proportional —
+          when frequency goes down, wavelength goes up.</li>
+      <li>The hardest stage was the binary stage (Stage 4), because negative amplitudes produce negative
+          levels, which cannot be written in binary. I fixed it by shifting each height up before rounding —
+          (amplitude + 1) ÷ 2 × (2^bits − 1) — so levels always land between 0 and 2^bits − 1.</li>
+    </ol>
+  </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
